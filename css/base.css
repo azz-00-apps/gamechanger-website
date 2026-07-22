@@ -404,6 +404,39 @@ button.nav-toggle { display: none; }
 }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
+/* Masked image reveal — a clip-path wipe for photography, distinct from
+   the fade-and-rise used for text. Same progressive-enhancement contract:
+   visible by default, only hidden once .js-reveal-ready is present. */
+.js-reveal-ready .reveal-image {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--duration-reveal) var(--ease-in-out);
+}
+.reveal-image.is-visible { clip-path: inset(0 0 0% 0); }
+
+/* Parallax — applied by main.js via inline transform on elements marked
+   [data-parallax] (typically the <img> inside a .statement-media or
+   .card-media wrapper, which must have overflow:hidden). will-change
+   hints the compositor; the JS never touches anything but `transform`,
+   so this cannot trigger layout/CLS. Disabled entirely under
+   prefers-reduced-motion and on narrow viewports — see main.js. */
+[data-parallax] {
+  will-change: transform;
+  transform: scale(1.12);
+}
+
+/* Sticky-column split — the media column pins while the text column
+   scrolls past it. Desktop only: at mobile widths columns stack and a
+   sticky image would just awkwardly follow the user down the page. Pure
+   CSS, so it can never hijack or trap scroll the way a JS-driven sticky
+   trick can. */
+@media (min-width: 901px) {
+  .split-sticky > :last-child {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-6));
+    align-self: start;
+  }
+}
+
 /* ============ FOOTER ============ */
 .site-footer {
   background: var(--surface-dark);
