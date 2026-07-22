@@ -77,7 +77,13 @@ body {
   height: 2px;
   background: var(--accent);
 }
-.body-lg { font-size: var(--text-body-lg); line-height: 1.5; }
+.body-lg { font-size: var(--text-body-lg); line-height: 1.5; max-width: var(--prose-max); }
+/* Body copy inside a text column shouldn't run edge-to-edge at wide
+   viewports — long line lengths hurt readability regardless of how
+   spacious the section around them is. */
+.split > div > p, .card p {
+  max-width: var(--prose-max);
+}
 .body-muted { color: var(--text-on-light-muted); }
 .on-dark .body-muted, .surface-dark .body-muted { color: var(--text-on-dark-muted); }
 .text-small { font-size: var(--text-small); }
@@ -114,7 +120,8 @@ body {
 .surface-raised-dark { background: var(--surface-dark-raised); }
 .surface-raised-light { background: var(--surface-light-raised); }
 
-.grid { display: grid; gap: var(--gutter); }
+.grid { display: grid; gap: var(--grid-gap); }
+.grid-tight { gap: var(--grid-gap-tight); }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
@@ -128,7 +135,7 @@ body {
 .split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(2rem, 4vw, 5rem);
+  gap: var(--split-gap);
   align-items: center;
 }
 @media (max-width: 900px) {
@@ -281,7 +288,7 @@ button.nav-toggle { display: none; }
 /* ============ CARDS ============ */
 .card {
   border-radius: var(--radius-card);
-  padding: clamp(1.5rem, 2vw, 2.25rem);
+  padding: var(--card-padding);
   border: 1px solid var(--border-on-light);
   background: var(--surface-light-raised);
 }
@@ -444,9 +451,51 @@ button.nav-toggle { display: none; }
   outline-offset: 1px;
 }
 
-/* ============ UTILITIES ============ */
+/* ============ SPACING UTILITIES ============
+   Every inter-element margin in the site should trace to one of these —
+   no bare inline margin-top values. Numbers match the --space-N scale in
+   tokens.css so the mapping from class to token is self-documenting. */
 .mt-0 { margin-top: 0; }
-.max-w-prose { max-width: 62ch; }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-5 { margin-top: var(--space-5); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-7 { margin-top: var(--space-7); }
+.mt-8 { margin-top: var(--space-8); }
+.mt-text { margin-top: var(--space-text); }
+.mt-component { margin-top: var(--space-component); }
+.max-w-prose { max-width: var(--prose-max); }
+.max-w-prose-wide { max-width: var(--prose-max-wide); }
+
+/* ============ LIST-DASH ============
+   The repeated "— label" credential/highlight list pattern used across
+   About, Coaches, Football etc. Was previously re-typed as inline
+   position:absolute styles in every occurrence — now one class. */
+.list-dash {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.list-dash.list-dash-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3) var(--space-6);
+}
+@media (max-width: 640px) {
+  .list-dash.list-dash-grid { grid-template-columns: 1fr; }
+}
+.list-dash li {
+  padding-left: 1.1em;
+  position: relative;
+}
+.list-dash li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  top: .15em;
+  color: var(--accent);
+}
 .center-text { text-align: center; margin-inline: auto; }
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; overflow: hidden;

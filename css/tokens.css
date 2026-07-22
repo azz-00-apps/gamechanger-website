@@ -65,12 +65,53 @@
   --text-small: 0.9375rem;   /* 15px */
   --text-label: 0.8125rem;   /* 13px, uppercase eyebrow/nav */
 
-  /* ---- Spacing (fluid section rhythm, echoes Wolverine's 90-150px measured range) ---- */
+  /* ---- Spacing scale ----
+     Base unit 4px, used to derive every other spacing value so nothing in
+     the system is an arbitrary one-off. Section rhythm echoes Wolverine's
+     measured 90-150px range; everything below that is this scale. */
+  --space-1: 0.25rem;   /*  4px */
+  --space-2: 0.5rem;    /*  8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 3rem;      /* 48px */
+  --space-8: 4rem;      /* 64px */
+
+  /* Fluid section rhythm (90-150px measured range) */
   --space-section-lg: clamp(4rem, 2.5rem + 7vw, 9.375rem);
   --space-section-md: clamp(2.5rem, 1.8rem + 3.5vw, 5.625rem);
   --space-section-sm: clamp(1.5rem, 1.2rem + 1.5vw, 2.75rem);
-  --gutter: clamp(1.25rem, 0.9rem + 2vw, 3rem);
-  --container-max: 1600px;
+  /* Spacing between related sub-elements within a section (e.g. eyebrow
+     block to heading block) — smaller than section rhythm, larger than
+     text rhythm. */
+  --space-component: clamp(1.5rem, 1.25rem + 1.25vw, 2.5rem);
+  /* Heading-to-paragraph, paragraph-to-paragraph rhythm within a text block. */
+  --space-text: clamp(0.85rem, 0.75rem + 0.5vw, 1.25rem);
+
+  /* Horizontal gutters — named breakpoint reference values (the fluid
+     --gutter clamp interpolates between the mobile and desktop ends of
+     this same range, so a media query needing a hard value and the fluid
+     default never disagree). */
+  --gutter-mobile: 1.25rem;   /* 20px */
+  --gutter-tablet: 2rem;      /* 32px */
+  --gutter-desktop: 3rem;     /* 48px, matches Wolverine's measured 48px */
+  --gutter: clamp(var(--gutter-mobile), 0.9rem + 2vw, var(--gutter-desktop));
+
+  /* Container widths */
+  --content-max: 1600px;        /* full-bleed section/container ceiling */
+  --container-max: var(--content-max); /* legacy alias, do not remove without checking all pages */
+  --prose-max: 62ch;             /* editorial/body-text reading width */
+  --prose-max-wide: 78ch;        /* wider editorial blocks (rare) */
+
+  /* Component spacing */
+  --card-padding: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
+  --grid-gap: var(--gutter);
+  --grid-gap-tight: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+  --split-gap: clamp(2rem, 1.4rem + 3vw, 5rem);
+
+  /* Layout reference */
+  --header-height: 4.5rem; /* used for scroll-margin-top + sticky/parallax math */
 
   /* ---- Shape ---- */
   --radius-btn: 999px;
@@ -79,7 +120,16 @@
 
   /* ---- Motion ---- */
   --ease-out: cubic-bezier(.16,1,.3,1);
+  --ease-in-out: cubic-bezier(.65,0,.35,1);
   --duration-fast: 150ms;
   --duration-med: 450ms;
   --duration-slow: 650ms;
+  --duration-reveal: 750ms;
+  --parallax-strength: 0.12; /* fraction of scroll delta applied as translateY */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 3.75rem;
+  }
 }
