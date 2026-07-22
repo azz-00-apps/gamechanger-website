@@ -1,0 +1,4 @@
+# gstack local runtime state (session logs, tokens, pids) — never commit
+.gstack/
+
+.DS_Store

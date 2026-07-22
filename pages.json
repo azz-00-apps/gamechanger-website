@@ -1,0 +1,93 @@
+[
+  {
+    "slug": "home",
+    "file": "index.html",
+    "nav_href": null,
+    "title": "Gamechanger Football and Performance | Elite Football Training, South West Sydney",
+    "description": "Private football and athletic development training for all ages in South West Sydney. Individualised coaching from A-League professional Brodie Clarkson."
+  },
+  {
+    "slug": "about",
+    "file": "about.html",
+    "nav_href": "about.html",
+    "title": "About | Gamechanger Football and Performance",
+    "description": "Meet Brodie Clarkson, former A-League professional and qualified Strength & Conditioning coach, and the philosophy behind Gamechanger Football and Performance."
+  },
+  {
+    "slug": "football",
+    "file": "football.html",
+    "nav_href": "football.html",
+    "title": "Football Training | Gamechanger Football and Performance",
+    "description": "Individualised football coaching covering technical, tactical, physical and mental performance for players of all ages in South West Sydney."
+  },
+  {
+    "slug": "strength-and-conditioning",
+    "file": "strength-and-conditioning.html",
+    "nav_href": "strength-and-conditioning.html",
+    "title": "Strength & Conditioning | Gamechanger Football and Performance",
+    "description": "Football-specific strength and conditioning programs built and supervised by a qualified S&C coach at Gamechanger HQ, Eagle Vale."
+  },
+  {
+    "slug": "speed-and-agility",
+    "file": "speed-and-agility.html",
+    "nav_href": "speed-and-agility.html",
+    "title": "Speed & Agility | Gamechanger Football and Performance",
+    "description": "Become the complete athlete — speed and agility training to take on-field performance to the next level."
+  },
+  {
+    "slug": "coaches",
+    "file": "coaches.html",
+    "nav_href": "coaches.html",
+    "title": "Our Coaches | Gamechanger Football and Performance",
+    "description": "Meet the Gamechanger coaching staff."
+  },
+  {
+    "slug": "locations",
+    "file": "locations.html",
+    "nav_href": "locations.html",
+    "title": "Locations | Gamechanger Football and Performance",
+    "description": "Train with Gamechanger across Eagle Vale, Liverpool and Bankstown, South West Sydney."
+  },
+  {
+    "slug": "school-holiday-camps",
+    "file": "school-holiday-camps.html",
+    "nav_href": "school-holiday-camps.html",
+    "title": "School Holiday Camps | Gamechanger Football and Performance",
+    "description": "Football and athletic development camps running these school holidays."
+  },
+  {
+    "slug": "facility",
+    "file": "facility.html",
+    "nav_href": "facility.html",
+    "title": "Facility | Gamechanger Football and Performance",
+    "description": "Inside Gamechanger HQ — the training facility behind the programs."
+  },
+  {
+    "slug": "video-analysis",
+    "file": "video-analysis.html",
+    "nav_href": "video-analysis.html",
+    "title": "Video Analysis | Gamechanger Football and Performance",
+    "description": "Coach-led video analysis to break down technical and tactical performance."
+  },
+  {
+    "slug": "testing",
+    "file": "testing.html",
+    "nav_href": "testing.html",
+    "title": "Testing | Gamechanger Football and Performance",
+    "description": "Benchmark athletic performance with Gamechanger's testing protocols."
+  },
+  {
+    "slug": "pricing",
+    "file": "pricing.html",
+    "nav_href": "pricing.html",
+    "title": "Pricing | Gamechanger Football and Performance",
+    "description": "Football 1-on-1, group training, strength & conditioning and speed & agility pricing at Gamechanger Football and Performance."
+  },
+  {
+    "slug": "contact",
+    "file": "contact.html",
+    "nav_href": "contact.html",
+    "title": "Waiting List | Gamechanger Football and Performance",
+    "description": "Get in touch or join the waiting list for Gamechanger Football and Performance."
+  }
+]
