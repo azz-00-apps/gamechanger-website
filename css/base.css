@@ -539,3 +539,45 @@ button.nav-toggle { display: none; }
   transition: top var(--duration-fast) ease;
 }
 .skip-link:focus { top: 1rem; }
+
+/* ============ PAGE TRANSITIONS ============
+   Cross-document View Transitions — a native browser feature, zero JS.
+   Unsupported browsers (Firefox, at time of writing) just navigate
+   normally with no error and no polyfill needed; this is pure
+   progressive enhancement. Do NOT reach for document.startViewTransition()
+   here — that's a different API, for same-document SPA transitions only,
+   and doesn't apply to a static multi-page site navigating between real
+   HTML documents the way this one does. */
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: gc-page-out 220ms var(--ease-out) both;
+  }
+  ::view-transition-new(root) {
+    animation: gc-page-in 320ms var(--ease-out) both;
+  }
+}
+@keyframes gc-page-out { to { opacity: 0; } }
+@keyframes gc-page-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ============ MAGNETIC / TILT HOVER (desktop pointer only) ============
+   Targets set inline by main.js via GSAP quickTo(). Buttons: subtle
+   magnetic pull toward the cursor. Card imagery: the WRAPPER tilts/lifts
+   toward the cursor, never the inner <img> — that element already carries
+   [data-parallax]'s own scroll-scrubbed transform, and animating both the
+   same property on the same element from two independent GSAP tweens
+   would fight each other. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary, .btn-ghost, .btn-ghost-light { will-change: transform; }
+  .card-media { will-change: transform; transition: box-shadow var(--duration-med) var(--ease-out); }
+  .card-media:hover { box-shadow: 0 20px 48px rgba(0,0,0,.22); }
+}

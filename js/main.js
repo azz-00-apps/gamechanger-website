@@ -171,6 +171,61 @@
         };
       }
     );
+
+    // --- Magnetic buttons + card tilt: desktop pointer-devices only.
+    // gsap.matchMedia() here too so a device that gains/loses a mouse
+    // (rare, but e.g. a 2-in-1 laptop's tablet mode) cleans up correctly
+    // instead of leaving a stale mousemove listener with no visible effect.
+    gsap.matchMedia().add('(hover: hover) and (pointer: fine)', function () {
+      var magneticEls = gsap.utils.toArray('.btn-primary, .btn-ghost, .btn-ghost-light');
+      var magneticCleanup = magneticEls.map(function (el) {
+        var xTo = gsap.quickTo(el, 'x', { duration: 0.4, ease: 'power3' });
+        var yTo = gsap.quickTo(el, 'y', { duration: 0.4, ease: 'power3' });
+        var onMove = function (e) {
+          var rect = el.getBoundingClientRect();
+          xTo((e.clientX - rect.left - rect.width / 2) * 0.3);
+          yTo((e.clientY - rect.top - rect.height / 2) * 0.3);
+        };
+        var onLeave = function () { xTo(0); yTo(0); };
+        el.addEventListener('mousemove', onMove);
+        el.addEventListener('mouseleave', onLeave);
+        return function () {
+          el.removeEventListener('mousemove', onMove);
+          el.removeEventListener('mouseleave', onLeave);
+        };
+      });
+
+      // Card imagery tilts toward the cursor — targets the .card-media
+      // WRAPPER's transform, never the inner <img>, which already has
+      // [data-parallax]'s own independent scroll-scrubbed transform.
+      var cardEls = gsap.utils.toArray('.card-media');
+      var cardCleanup = cardEls.map(function (card) {
+        var xTo = gsap.quickTo(card, 'x', { duration: 0.5, ease: 'power2' });
+        var yTo = gsap.quickTo(card, 'y', { duration: 0.5, ease: 'power2' });
+        var rTo = gsap.quickTo(card, 'rotation', { duration: 0.5, ease: 'power2' });
+        var onMove = function (e) {
+          var rect = card.getBoundingClientRect();
+          var relX = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+          var relY = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+          xTo(relX * 6);
+          yTo(relY * 6);
+          rTo(relX * 1.2);
+        };
+        var onLeave = function () { xTo(0); yTo(0); rTo(0); };
+        card.addEventListener('mousemove', onMove);
+        card.addEventListener('mouseleave', onLeave);
+        return function () {
+          card.removeEventListener('mousemove', onMove);
+          card.removeEventListener('mouseleave', onLeave);
+        };
+      });
+
+      return function cleanup() {
+        magneticCleanup.forEach(function (fn) { fn(); });
+        cardCleanup.forEach(function (fn) { fn(); });
+        gsap.set(magneticEls.concat(cardEls), { clearProps: 'transform' });
+      };
+    });
   }
 
   // Mark the current page's nav link (belt-and-braces alongside server-set aria-current)
