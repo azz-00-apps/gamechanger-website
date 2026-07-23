@@ -146,24 +146,54 @@ single highest-leverage fix in the whole plan.
 
 ### Verification checklist
 
-- [ ] Real end-to-end test: submit the form with real (or clearly marked
+- [x] Real end-to-end test: submit the form with real (or clearly marked
       test) data, confirm the site owner actually receives the
       submission/email. This cannot be verified by reading code alone —
       it requires one live submission against the real Forminit form ID.
-- [ ] Confirm the submit button visibly disables and shows a
+      — **Done**, twice: once reproduced via console to inspect the raw
+      response (`hashId j3kCCJlauWWo0PvH`), once via the real button-click
+      UI path. Both landed correctly in the live Forminit dashboard,
+      clearly marked as test data safe to delete.
+- [x] Confirm the submit button visibly disables and shows a
       loading/sending state during submission (not just instant
-      success/fail).
-- [ ] Confirm a real error state renders if `forminit.submit()` rejects
-      (test by temporarily using an invalid form ID, then revert).
-- [ ] Confirm the SDK-missing fallback works: block
+      success/fail). — **Done**, confirmed `disabled: true, text:
+      "Sending…"` mid-request.
+- [x] Confirm a real error state renders if `forminit.submit()` rejects
+      (test by temporarily using an invalid form ID, then revert). —
+      **Done**. Also incidentally hit a second, genuine error case first:
+      `sender.fullName` rejects commas/slashes (real server-side
+      validation on real submitter names, not a bug) — confirmed the
+      error path handles real validation rejections too, not just
+      transport-level failures.
+- [x] Confirm the SDK-missing fallback works: block
       `forminit.com` in network conditions (or temporarily comment out the
       script tag) and confirm the form shows the phone/email fallback
-      message rather than silently failing again.
-- [ ] Re-run a contrast check on the new success/error message text
+      message rather than silently failing again. — **Done**, temporarily
+      broke the SDK script URL, confirmed the fallback message renders
+      immediately with zero attempted submission, then reverted.
+- [x] Re-run a contrast check on the new success/error message text
       against its background — don't introduce a new, unverified color
-      pairing while fixing an honesty problem.
-- [ ] Zero console errors on `contact.html`, fresh load (matches this
-      project's existing QA bar from every prior phase).
+      pairing while fixing an honesty problem. — **Done**. White
+      (`--text-on-dark`) on `--surface-dark-raised` (#1B1B1B, computed
+      `rgb(27,27,27)`) is ~17:1 — reuses the site's existing, already-
+      pervasive dark-card text pairing, no new color introduced.
+- [x] Zero console errors on `contact.html`, fresh load (matches this
+      project's existing QA bar from every prior phase). — **Done**,
+      spot-checked alongside index/football/pricing too.
+
+**Deviation from this phase's own field-naming instruction, with
+reasoning:** Phase 0 above said not to bother renaming fields to
+Forminit's `fi-*` convention, calling it cosmetic starter-code naming.
+Re-checked Forminit's current docs before implementing (per this
+project's standing "verify, don't assume" discipline) and that turned
+out to be wrong — `fi-{blockType}-{name}` is how the server types and
+validates every field, required for data to land as structured blocks
+rather than an unrecognized blob. Renamed all seven fields accordingly;
+see the Phase 1 commit message for the full field-by-field mapping and
+reasoning, including why phone was deliberately mapped to a plain
+`fi-text-phone` block instead of the seemingly-obvious `sender.phone`
+(E.164-only validation would have rejected the Australian local format
+real users here will actually type).
 
 ### Anti-pattern guards
 
