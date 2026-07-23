@@ -314,6 +314,7 @@ button.nav-toggle { display: none; }
   border-radius: var(--radius-card);
   overflow: hidden;
   aspect-ratio: 4 / 3;
+  position: relative;
 }
 .card-media img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -584,4 +585,23 @@ button.nav-toggle { display: none; }
   .btn-primary, .btn-ghost, .btn-ghost-light { will-change: transform; }
   .card-media { will-change: transform; transition: box-shadow var(--duration-med) var(--ease-out); }
   .card-media:hover { box-shadow: 0 20px 48px rgba(0,0,0,.22); }
+
+  /* Cursor-spotlight glow — a separate visual layer from the tilt above,
+     driven by --spotlight-x/-y (set directly via main.js on mousemove, no
+     GSAP tween: the effect only reads right as an exact 1:1 cursor
+     follow, not an eased one). Opacity-gated so it costs nothing when the
+     card isn't hovered, and pointer-events: none keeps it out of the way
+     of the tilt listener's own mousemove/mouseleave handlers on the card
+     underneath. */
+  .card-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), color-mix(in srgb, var(--accent) 40%, transparent), transparent 45%);
+    opacity: 0;
+    transition: opacity var(--duration-med) var(--ease-out);
+    pointer-events: none;
+  }
+  .card-media:hover::after { opacity: 1; }
 }

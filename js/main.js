@@ -264,8 +264,17 @@
           xTo(relX * 6);
           yTo(relY * 6);
           rTo(relX * 1.2);
+          // Spotlight glow: set directly (no GSAP tween) — reads as an
+          // exact cursor-position follow, matching the reference site's
+          // behavior, distinct from the tilt's own eased motion above.
+          card.style.setProperty('--spotlight-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+          card.style.setProperty('--spotlight-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
         };
-        var onLeave = function () { xTo(0); yTo(0); rTo(0); };
+        var onLeave = function () {
+          xTo(0); yTo(0); rTo(0);
+          card.style.setProperty('--spotlight-x', '50%');
+          card.style.setProperty('--spotlight-y', '50%');
+        };
         card.addEventListener('mousemove', onMove);
         card.addEventListener('mouseleave', onLeave);
         return function () {
