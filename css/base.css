@@ -187,7 +187,7 @@ body {
 .nav-actions { display: flex; align-items: center; gap: 1rem; }
 button.nav-toggle { display: none; }
 .nav-mobile-book { display: none; }
-@media (max-width: 1000px) {
+@media (max-width: 1140px) {
   .nav-mobile-book { display: block; margin-top: 1rem; }
 }
 @media (max-width: 480px) {
@@ -199,7 +199,11 @@ button.nav-toggle { display: none; }
   .nav-logo { font-size: .9rem; }
   .nav-actions { display: none; }
 }
-@media (max-width: 1000px) {
+/* 1140px, not the more common 1024/1000 — the full desktop nav (8 links +
+   logo + Book Now) measurably wraps to two lines at 1024px (tablet
+   landscape, one of the required validation viewports). Tablet gets the
+   clean hamburger menu instead of a cramped, wrapping desktop nav. */
+@media (max-width: 1140px) {
   .nav-links {
     display: none;
     position: fixed;
@@ -227,7 +231,7 @@ button.nav-toggle { display: none; }
   display: none;
   gap: .1rem;
 }
-@media (min-width: 1001px) {
+@media (min-width: 1141px) {
   .nav-dropdown-menu {
     position: absolute;
     top: 100%;
@@ -246,7 +250,7 @@ button.nav-toggle { display: none; }
   .nav-dropdown-menu a { display: block; padding: .6rem .85rem; border-radius: 4px; }
   .nav-dropdown-menu a:hover { background: rgba(255,255,255,.06); }
 }
-@media (max-width: 1000px) {
+@media (max-width: 1140px) {
   .nav-dropdown-menu { display: flex; flex-direction: column; padding-left: 1rem; }
   .nav-dropdown-menu a { font-size: 1rem; opacity: .8; }
 }
