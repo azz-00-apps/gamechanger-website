@@ -401,30 +401,48 @@ mechanically without re-verifying against the final state of the codebase).
 
 ## Final Phase: Verification
 
-1. **Re-run the three load-bearing principle checks from the audit:**
+1. **[x] Re-run the three load-bearing principle checks from the audit:**
    - #2 Useful: real end-to-end form submission test, confirmed received.
+     — Done in Phase 1 (`hashId j3kCCJlauWWo0PvH` + a second confirmation
+     via the real button-click path), both live in the Forminit
+     dashboard.
    - #6 Honest: "Send" now genuinely sends; no other label→behavior
-     mismatches introduced by this work.
+     mismatches introduced by this work. — Re-checked everything this
+     plan added: loading text ("Sending…"), the success message, and the
+     error message all accurately describe what's actually happening; no
+     new mismatches found.
    - #8 Thorough: empty/loading/error/success states all present and
-     screenshotted for the contact form specifically.
-2. **Contrast re-check:** compute WCAG ratios for every color touched in
-   Phases 1-3 (the new eyebrow color, the fixed nav-button color, any new
-   success/error state colors) — don't just eyeball it, use the same
-   relative-luminance method the audit used.
-3. **Full-site sweep**, matching this project's established QA pattern
-   from every prior phase this session: zero console errors and zero
-   horizontal overflow at 375px across all 13 pages, fresh navigation per
-   page (not relying on a cumulative console buffer, which produced a
-   false alarm earlier in this project's history).
-4. **Reduced-motion spot check:** confirm via `matchMedia` in the console
-   that the Phase 4 fix actually disables the magnetic/tilt block under
-   simulated reduced-motion conditions.
-5. **Dead-code confirmation:** after Phase 5, re-run the same
-   unused-class/unused-token grep methodology the audit's structural
-   subagent used, confirm the removed list no longer appears and nothing
-   else broke.
-6. Commit each phase separately (matching this project's existing commit
-   discipline — one focused commit per phase, not one giant commit), push,
-   and consider re-running `/claude-mem:design-is` afterward to confirm
-   the score actually moved — that's the real test of whether this plan
-   worked, not just whether the checklist above was followed.
+     screenshotted for the contact form specifically. — Empty state is
+     just the page's normal load (covered throughout); loading confirmed
+     via computed `disabled`/text mid-request; error and success both
+     screenshotted in Phase 1.
+2. **[x] Contrast re-check:** compute WCAG ratios for every color touched
+   in Phases 1-3 — **Done.** Eyebrow: gold-700 on `--surface-light` ≈
+   5.25:1 (computed against the WCAG relative-luminance formula, not
+   eyeballed). Nav button: resolves to `--accent-contrast`, the same
+   already-passing color every other gold-background button on the site
+   already uses — not a new color. Success/error cards: white on
+   `--surface-dark-raised` ≈ 17:1.
+3. **[x] Full-site sweep** — **Done**, on the final state after all 5
+   phases: zero console errors and zero horizontal overflow at 375px
+   across all 13 pages, fresh navigation per page.
+4. **[x] Reduced-motion spot check** — confirmed via code inspection
+   (Phase 4) rather than live `matchMedia` simulation: gstack's CDP
+   media-feature emulation is blocked, the same documented tooling gap
+   already noted for this exact media feature in `plans/03`. The
+   combined query string was confirmed valid and matching under normal
+   conditions; that reduced-motion correctly excludes the block follows
+   from how CSS media-query AND-combination and `gsap.matchMedia()` are
+   specified to work, not from something this project's tooling could
+   directly observe.
+5. **[x] Dead-code confirmation** — re-ran the removal grep one more
+   time against the final state (no changes since Phase 5): all 27 items
+   confirmed still absent, nothing else broke.
+6. **[x]** Commit each phase separately — done, 6 commits (5 phases + one
+   line-reference doc fix), all pushed to `origin main`.
+
+**Recommendation, not executed:** this plan fixed the audit's three
+load-bearing gaps (#2, #6, #8) plus #3/#4/#9/#10 partially. A follow-up
+`/claude-mem:design-is` re-audit would be the real test of whether the
+score actually moved — flagging per this item's own instruction, left
+for the site owner to trigger.
