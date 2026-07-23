@@ -107,7 +107,6 @@
   // default state (see base.css — none of these selectors carry
   // opacity:0 or clip-path in the stylesheet anymore; GSAP is the only
   // thing that ever hides them, via gsap.set(), and only in this branch).
-  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var gsapReady = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
 
   if (gsapReady) {
@@ -278,11 +277,15 @@
       }
     );
 
-    // --- Magnetic buttons + card tilt: desktop pointer-devices only.
-    // gsap.matchMedia() here too so a device that gains/loses a mouse
-    // (rare, but e.g. a 2-in-1 laptop's tablet mode) cleans up correctly
-    // instead of leaving a stale mousemove listener with no visible effect.
-    gsap.matchMedia().add('(hover: hover) and (pointer: fine)', function () {
+    // --- Magnetic buttons + card tilt + cursor-spotlight: desktop
+    // pointer-devices only, and — unlike reveal/parallax above, which
+    // have a "reduced" variant (shorter duration) — reduced-motion here
+    // means don't register this block at all, since there's no
+    // meaningful lesser version of a magnetic pull or a cursor-tracking
+    // glow. gsap.matchMedia() here too so a device that gains/loses a
+    // mouse, or has the OS-level motion setting change mid-session,
+    // cleans up correctly instead of leaving a stale mousemove listener.
+    gsap.matchMedia().add('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)', function () {
       var magneticEls = gsap.utils.toArray('.btn-primary, .btn-ghost, .btn-ghost-light');
       var magneticCleanup = magneticEls.map(function (el) {
         var xTo = gsap.quickTo(el, 'x', { duration: 0.4, ease: 'power3' });
