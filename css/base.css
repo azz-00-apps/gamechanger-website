@@ -558,14 +558,19 @@ button.nav-toggle { display: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root) {
-    animation: gc-page-out 220ms var(--ease-out) both;
+    animation: gc-page-out 260ms var(--ease-out) both;
   }
   ::view-transition-new(root) {
-    animation: gc-page-in 320ms var(--ease-out) both;
+    animation: gc-page-in 380ms var(--ease-out) both;
   }
 }
-@keyframes gc-page-out { to { opacity: 0; } }
-@keyframes gc-page-in { from { opacity: 0; } }
+/* A restrained scale rides alongside the fade — both pages move in the
+   same "forward" direction (old recedes larger, new arrives from
+   slightly smaller) rather than a flat crossfade, echoing the same
+   scale-in language the .reveal system already uses on content, just
+   far more subtle since this applies to the entire viewport. */
+@keyframes gc-page-out { to { opacity: 0; scale: 1.02; } }
+@keyframes gc-page-in { from { opacity: 0; scale: .98; } }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),
