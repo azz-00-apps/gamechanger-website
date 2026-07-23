@@ -111,3 +111,26 @@ existing button contrast — never white-on-gold.
   ~80ms per element — restrained, no bounce (matches Wolverine's measured feel).
 - Hover: buttons darken/lighten one step + 150ms ease, no scale-jiggle.
 - Respect `prefers-reduced-motion`.
+- **Parallax** (`[data-parallax]`, added in the motion-system pass) — statement/card
+  imagery drifts ±48px via `transform: scale(1.12) translate3d()` as its host section
+  crosses the viewport center. rAF-throttled, IntersectionObserver-gated so only
+  on-screen elements are touched, transform-only (no CLS possible). Disabled under
+  `prefers-reduced-motion` and at ≤768px — see `js/main.js`.
+- **Masked image reveal** (`.reveal-image`) — a `clip-path` wipe for photography,
+  parallel to but visually distinct from the text fade-rise. Same visible-by-default
+  progressive-enhancement contract as `.reveal`.
+- **Sticky columns** (`.split-sticky`, desktop only) — the media column in a `.split`
+  pins while the text column scrolls past, when the text column is meaningfully
+  taller than the image. Pure CSS `position: sticky`, so it can never hijack or trap
+  scroll. Applied selectively (About's Football section) where there's enough content
+  to give it a real, not-forced pin range — not applied blanket-wide.
+
+## Spacing system
+
+Full numbered scale in `css/tokens.css` (`--space-1` through `--space-8`, plus
+semantic `--space-text`/`--space-component`/`--space-section-*`). Every inter-element
+margin in `content/*.html` should be a `.mt-N` utility tied to this scale — an audit
+during the motion-system pass found 234 arbitrary inline `margin-top` values (7
+different numbers with no systematic basis) and consolidated them onto 5 scale tiers.
+Editorial/body text width is capped via `--prose-max` (62ch) so lines never run
+edge-to-edge at wide viewports, applied by default to `.split` column paragraphs.
