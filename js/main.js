@@ -55,6 +55,35 @@
         var motionOK = context.conditions.motionOK;
         var desktop = context.conditions.desktop;
 
+        // --- Smooth scroll (Lenis), motion-preference gated. Lenis has no
+        // reduced-motion option of its own (checked exhaustively against
+        // its docs/repo — genuinely absent, not just undocumented), so the
+        // correct fix is architectural: only ever create an instance when
+        // motionOK is true. Under reduced motion this whole block simply
+        // never runs, leaving native scroll — which inherently satisfies
+        // reduced-motion since there's no smoothing layer to disable.
+        // Runs at every viewport width (not gated to `desktop`) since
+        // smooth scroll isn't a desktop-only enhancement the way
+        // parallax/magnetic-hover are.
+        var lenis = null;
+        if (motionOK && typeof window.Lenis !== 'undefined') {
+          lenis = new Lenis();
+          // Exact current integration pattern from Lenis's own docs: feed
+          // its raf loop from GSAP's ticker (already running for
+          // everything else in this file) instead of Lenis's own
+          // independent autoRaf, and keep ScrollTrigger's cached measurements
+          // in sync with Lenis's scroll position on every scroll event.
+          lenis.on('scroll', ScrollTrigger.update);
+          gsap.ticker.add(function (time) {
+            lenis.raf(time * 1000); // GSAP ticker time is seconds; Lenis wants ms
+          });
+          gsap.ticker.lagSmoothing(0);
+        }
+        // If Lenis didn't load (CDN failure) or motion is reduced, `lenis`
+        // stays null and every reveal/parallax/reveal-image system below
+        // continues running exactly as it did before this feature existed
+        // — none of them depend on Lenis being present.
+
         // --- Text reveal: fade + rise, batched so elements entering the
         // viewport together animate as one coordinated group rather than
         // firing independently. Runs even under reduced-motion, just with
@@ -173,8 +202,10 @@
         return function cleanup() {
           // gsap.matchMedia() calls this automatically when a condition's
           // query stops matching (e.g. resize across the desktop
-          // breakpoint) — revert to plain visible state rather than leave
+          // breakpoint, or the OS-level reduced-motion setting changing
+          // mid-session) — revert to plain visible state rather than leave
           // stale transforms/clip-paths from the previous breakpoint.
+          if (lenis) { lenis.destroy(); }
           gsap.set('.reveal, .reveal-image, [data-parallax]', { clearProps: 'all' });
         };
       }
