@@ -1,7 +1,41 @@
 /* Gamechanger Football — Design Tokens
    See /research/design-system.md for full rationale. Locked — do not fork per-page. */
 
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap');
+/* General Sans (Fontshare, free commercial license) — the closest freely-
+   licensed match to Wolverine Worldwide's ABC Diatype (a paid commercial
+   typeface we can't legally reuse; see plans/01-award-winning-motion-
+   and-typography.md Phase 0 for the verification + comparison that led
+   here). Self-hosted rather than linked from Fontshare's CDN, for the
+   same reason a production site wouldn't hotlink Google Fonts from a
+   third party — one less runtime dependency for the live business site. */
+@font-face {
+  font-family: 'General Sans';
+  src: url('../assets/fonts/GeneralSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('../assets/fonts/GeneralSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('../assets/fonts/GeneralSans-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('../assets/fonts/GeneralSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   /* ---- Color ---- */
@@ -45,9 +79,14 @@
   --accent-tint: var(--gc-gold-300);
   --accent-contrast: var(--gc-ink); /* text/icons on gold are always dark, never white */
 
-  /* ---- Typography ---- */
-  --font-display: 'Archivo Black', 'Archivo', Arial, Helvetica, sans-serif;
-  --font-body: 'Archivo', Arial, Helvetica, sans-serif;
+  /* ---- Typography ----
+     Single family (General Sans), differentiated by weight only — binary
+     400/700, matching how ABC Diatype itself is actually used on the
+     reference site (confirmed via its real loaded font files: Medium +
+     Bold, no separate Black/900 cut). Every --font-display usage in
+     base.css pairs it with an explicit font-weight: 700. */
+  --font-display: 'General Sans', Arial, Helvetica, sans-serif;
+  --font-body: 'General Sans', Arial, Helvetica, sans-serif;
 
   --tracking-body: -0.01em;
   --tracking-heading: -0.03em;

@@ -41,14 +41,27 @@ Clarkson). Every page must use only these tokens/components — no one-off style
 
 ## Typography
 
-- **Display — Archivo Black** (900): hero statements, section-break headlines, big
-  stats. Free substitute for the live site's licensed `lulo-clean-w01-one-bold` —
-  same bold geometric/scoreboard character, same "coach shouting a headline" energy.
-- **Body/UI — Archivo** (400 / 600 / 700): nav, body copy, buttons, captions. Same
-  family as display (one typeface family site-wide, per Wolverine's discipline), just
-  the non-black cuts.
-- Google Fonts, self-hosted or `@font-face` from Google's CDN — both free, no licensing
-  risk (unlike the live site's paid Wix/Lulo Clean webfont).
+**Superseded 2026-07-23** (see `plans/01-award-winning-motion-and-typography.md`):
+replaced Archivo/Archivo Black with **General Sans** (Fontshare, free commercial
+license), self-hosted under `assets/fonts/`. Reference site's actual headline
+typeface was verified via live computed CSS and the real loaded `.woff2` filenames
+to be ABC Diatype (ABC Dinamo) — a paid commercial font, not legally reusable here.
+General Sans was chosen after a side-by-side comparison against Switzer, Inter, DM
+Sans, and Hanken Grotesk (screenshots in that session, not committed) as the closest
+shape match: same soft/rounded terminal character on `a`/`o`/`r`, similar x-height
+and proportions.
+
+- **Single family, binary weight system** — General Sans 400 (body) / 700 (display,
+  headings, stats, price figures), no separate "Black" cut. Matches how ABC Diatype
+  is actually used on the reference site (its real font files are Medium + Bold
+  only, confirmed via network inspection — no 900/Black weight exists there either).
+  Every CSS rule using `--font-display` pairs it with an explicit `font-weight: 700`
+  — General Sans's 400 cut is what renders if that's ever missed, so don't assume
+  boldness is implicit the way it was with the old dedicated Archivo Black font file.
+- Self-hosted (`assets/fonts/GeneralSans-{Regular,Medium,Semibold,Bold}.woff2`) rather
+  than linked from Fontshare's CDN — one less live runtime dependency for the
+  production business site. Fontshare's free license explicitly permits this.
+- ~~Google Fonts, self-hosted or `@font-face` from Google's CDN~~ — superseded above.
 - Negative tracking that tightens with size: -0.01em body → -0.03em headings →
   -0.045em display statements (mirrors Wolverine's -2%/-3%/-5% progression).
 - No forced uppercase via CSS on body copy; nav and eyebrow labels stay uppercase as a
