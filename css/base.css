@@ -81,6 +81,15 @@ body {
   height: 2px;
   background: var(--accent);
 }
+/* --accent (gold-400) is 11.45:1 on dark surfaces but only ~1.56:1 on
+   light ones — nowhere near AA. --accent-on-light is a darker step on
+   the same gold hue, sized to clear 4.5:1 (see tokens.css). Covers the
+   decorative dash too, not just the text, so the two don't mismatch. */
+.surface-light .eyebrow,
+.surface-light .eyebrow::before {
+  color: var(--accent-on-light);
+  background: var(--accent-on-light);
+}
 .body-lg { font-size: var(--text-body-lg); line-height: 1.5; max-width: var(--prose-max); }
 /* Body copy inside a text column shouldn't run edge-to-edge at wide
    viewports — long line lengths hurt readability regardless of how

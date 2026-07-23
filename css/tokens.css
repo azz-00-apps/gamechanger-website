@@ -58,6 +58,7 @@
   --gc-gold-400: #E8C061;
   --gc-gold-500: #CBA34E;
   --gc-gold-600: #B8933E;
+  --gc-gold-700: #7A6229;
 
   /* ---- Semantic ---- */
   --surface-dark: var(--gc-black);
@@ -78,6 +79,11 @@
   --accent-press: var(--gc-gold-600);
   --accent-tint: var(--gc-gold-300);
   --accent-contrast: var(--gc-ink); /* text/icons on gold are always dark, never white */
+  /* --accent-press (gold-600) is only 2.6:1 on --surface-light — nowhere
+     near AA. gold-700 is sized specifically to clear 4.5:1 there (~5.25:1
+     computed) while staying the same hue/saturation as the rest of the
+     gold scale, just darker — a bronze reading, not a color swap. */
+  --accent-on-light: var(--gc-gold-700);
 
   /* ---- Typography ----
      Single family (General Sans), differentiated by weight only — binary
