@@ -70,7 +70,14 @@
           return !(desktop && el.classList.contains('split-headline'));
         });
         if (revealEls.length) {
-          gsap.set(revealEls, { opacity: 0, y: motionOK ? 24 : 0 });
+          // Fade + rise + a subtle scale-up (0.94 -> 1), not just fade+rise
+          // alone. Scale-in-on-reveal is a well-established, widely-used
+          // scroll-animation technique (seen on countless sites, including
+          // wolverineworldwide.com's own IntersectionObserver-driven
+          // reveal system) — added here as our own GSAP tween with our
+          // own timing/easing, not by referencing anyone else's
+          // implementation code.
+          gsap.set(revealEls, { opacity: 0, y: motionOK ? 24 : 0, scale: motionOK ? 0.94 : 1 });
           ScrollTrigger.batch(revealEls, {
             start: 'top 88%',
             once: true,
@@ -78,6 +85,7 @@
               gsap.to(batch, {
                 opacity: 1,
                 y: 0,
+                scale: 1,
                 duration: motionOK ? 0.75 : 0.01,
                 stagger: motionOK ? 0.08 : 0,
                 ease: 'power3.out',
@@ -88,7 +96,7 @@
           // Safety net: if a batch never enters for any reason, force
           // visible after a few seconds rather than leave it hidden.
           setTimeout(function () {
-            gsap.set(revealEls.filter(function (el) { return gsap.getProperty(el, 'opacity') === 0; }), { opacity: 1, y: 0 });
+            gsap.set(revealEls.filter(function (el) { return gsap.getProperty(el, 'opacity') === 0; }), { opacity: 1, y: 0, scale: 1 });
           }, 3000);
         }
 
