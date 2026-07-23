@@ -29,8 +29,7 @@ SHELL = """<!doctype html>
 <title>{title}</title>
 <meta name="description" content="{description}">
 <link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="css/tokens.css?v={asset_version}">
 <link rel="stylesheet" href="css/base.css?v={asset_version}">
 {page_css}
@@ -41,6 +40,9 @@ SHELL = """<!doctype html>
 {content}
 </main>
 {footer}
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js" defer></script>
 <script src="js/main.js?v={asset_version}" defer></script>
 </body>
 </html>

@@ -402,34 +402,21 @@ button.nav-toggle { display: none; }
   text-shadow: 0 2px 12px rgba(0,0,0,.85);
 }
 
-/* ============ REVEAL ANIMATION ============
-   Progressive enhancement: content is fully visible by default. Only once
-   main.js confirms IntersectionObserver works does it add .js-reveal-ready
-   to <html> — that's what switches .reveal elements to a hidden starting
-   state. If JS fails, is slow, or is blocked, content simply never animates
-   and stays visible. It must never depend on JS to become visible at all. */
-.js-reveal-ready .reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity var(--duration-slow) var(--ease-out), transform var(--duration-slow) var(--ease-out);
-}
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
+/* ============ REVEAL / PARALLAX / TEXT-SPLIT ANIMATION ============
+   GSAP + ScrollTrigger now owns all of this (see js/main.js) — driven via
+   gsap.set()/gsap.to() directly on these elements' inline styles, not CSS
+   classes or transitions. Deliberately NO opacity/clip-path/transform
+   rules for .reveal, .reveal-image, or .split-headline live here anymore:
+   GSAP is a CDN dependency and is therefore strictly more fragile than
+   the zero-dependency system this replaced, so if it fails to load these
+   elements must stay in plain HTML's fully-visible default state rather
+   than ship a CSS rule that could hide them with nothing left to reveal
+   them again. See main.js's gsapReady guard for the actual contract.
 
-/* Masked image reveal — a clip-path wipe for photography, distinct from
-   the fade-and-rise used for text. Same progressive-enhancement contract:
-   visible by default, only hidden once .js-reveal-ready is present. */
-.js-reveal-ready .reveal-image {
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path var(--duration-reveal) var(--ease-in-out);
-}
-.reveal-image.is-visible { clip-path: inset(0 0 0% 0); }
-
-/* Parallax — applied by main.js via inline transform on elements marked
-   [data-parallax] (typically the <img> inside a .statement-media or
-   .card-media wrapper, which must have overflow:hidden). will-change
-   hints the compositor; the JS never touches anything but `transform`,
-   so this cannot trigger layout/CLS. Disabled entirely under
-   prefers-reduced-motion and on narrow viewports — see main.js. */
+   [data-parallax] keeps one small CSS default below — a static 1.12 zoom
+   with no motion — so a full GSAP load failure degrades to "photo reads
+   as an intentional tight crop" rather than "unscaled image with visible
+   edges," even though GSAP normally sets this same value itself too. */
 [data-parallax] {
   will-change: transform;
   transform: scale(1.12);

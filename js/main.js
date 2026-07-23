@@ -28,119 +28,149 @@
     });
   }
 
-  // Scroll-reveal for elements marked .reveal — progressive enhancement.
-  // Content is visible by default (see base.css); we only opt INTO the
-  // hidden-then-reveal state once we're confident we can bring it back,
-  // and we always arm a fallback timer in case the observer never fires
-  // (seen in some automated/backgrounded browser contexts).
-  var revealEls = document.querySelectorAll('.reveal');
-  if (revealEls.length && 'IntersectionObserver' in window) {
-    document.documentElement.classList.add('js-reveal-ready');
-
-    var revealAll = function () {
-      revealEls.forEach(function (el) { el.classList.add('is-visible'); });
-    };
-    // Safety net: if IntersectionObserver never calls back (some
-    // backgrounded/automated browser contexts throttle it indefinitely),
-    // don't leave content permanently invisible.
-    var fallbackTimer = setTimeout(revealAll, 2000);
-
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            clearTimeout(fallbackTimer);
-            var el = entry.target;
-            var delay = el.dataset.revealDelay || 0;
-            setTimeout(function () { el.classList.add('is-visible'); }, Number(delay));
-            io.unobserve(el);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
-    );
-    revealEls.forEach(function (el, i) {
-      if (!el.dataset.revealDelay) el.dataset.revealDelay = String((i % 6) * 80);
-      io.observe(el);
-    });
-  }
-
+  // ============ MOTION SYSTEM (GSAP + ScrollTrigger) ============
+  //
+  // Safety contract, unchanged in spirit from the vanilla system this
+  // replaces: content must NEVER depend on a third-party script loading
+  // to become visible. GSAP is now a CDN dependency (see build.py), which
+  // is strictly more fragile than the zero-dependency system before it —
+  // so the very first thing this block does is confirm gsap/ScrollTrigger
+  // actually loaded. If they didn't (CDN down, blocked, slow network),
+  // every element listed below is left in its plain, fully-visible CSS
+  // default state (see base.css — none of these selectors carry
+  // opacity:0 or clip-path in the stylesheet anymore; GSAP is the only
+  // thing that ever hides them, via gsap.set(), and only in this branch).
   var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var gsapReady = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
 
-  // Masked image reveal — same progressive-enhancement/fallback-timer
-  // contract as the text reveal above, but for .reveal-image elements
-  // (clip-path wipe defined in base.css).
-  var revealImageEls = document.querySelectorAll('.reveal-image');
-  if (revealImageEls.length && 'IntersectionObserver' in window) {
-    document.documentElement.classList.add('js-reveal-ready');
-    var revealAllImages = function () {
-      revealImageEls.forEach(function (el) { el.classList.add('is-visible'); });
-    };
-    var imageFallback = setTimeout(revealAllImages, 2000);
-    var imageIO = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            clearTimeout(imageFallback);
-            entry.target.classList.add('is-visible');
-            imageIO.unobserve(entry.target);
-          }
-        });
+  if (gsapReady) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.matchMedia().add(
+      {
+        motionOK: '(prefers-reduced-motion: no-preference)',
+        desktop: '(min-width: 769px) and (prefers-reduced-motion: no-preference)'
       },
-      { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
-    );
-    revealImageEls.forEach(function (el) { imageIO.observe(el); });
-  }
+      function (context) {
+        var motionOK = context.conditions.motionOK;
+        var desktop = context.conditions.desktop;
 
-  // Parallax — statement/hero media images drift slightly against scroll
-  // for depth ("layered foreground/background movement"). GPU-only
-  // (transform, never top/left/width/height, so this cannot cause layout
-  // shift), rAF-throttled, and IntersectionObserver-gated so the scroll
-  // handler only ever touches elements actually on screen. Skipped
-  // entirely under prefers-reduced-motion and on narrow viewports, where
-  // the effect is barely visible anyway and not worth the battery cost.
-  var parallaxEls = document.querySelectorAll('[data-parallax]');
-  if (parallaxEls.length && !prefersReducedMotion && window.innerWidth > 768 && 'IntersectionObserver' in window) {
-    var activeParallax = [];
-    var parallaxIO = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          var i = activeParallax.indexOf(entry.target);
-          if (entry.isIntersecting && i === -1) activeParallax.push(entry.target);
-          else if (!entry.isIntersecting && i !== -1) activeParallax.splice(i, 1);
+        // --- Text reveal: fade + rise, batched so elements entering the
+        // viewport together animate as one coordinated group rather than
+        // firing independently. Runs even under reduced-motion, just with
+        // a near-instant duration (base.css's own global reduced-motion
+        // override doesn't touch GSAP-driven inline styles, so this is
+        // handled explicitly here too).
+        // Elements carrying both .reveal and .split-headline get the
+        // word-level split animation instead, but ONLY on desktop where
+        // that branch actually runs (see below) — on mobile/reduced-
+        // motion they fall through to this plain block-level reveal, so
+        // they're never left with zero entrance treatment either way.
+        var revealEls = gsap.utils.toArray('.reveal').filter(function (el) {
+          return !(desktop && el.classList.contains('split-headline'));
         });
-        // Elements already in view at load (the hero image, most often)
-        // are reported by this same callback shortly after observe() is
-        // called — without this, they'd sit un-transformed until the
-        // user's first scroll event.
-        updateParallax();
-      },
-      { rootMargin: '15% 0px 15% 0px' }
-    );
-    parallaxEls.forEach(function (el) { parallaxIO.observe(el); });
+        if (revealEls.length) {
+          gsap.set(revealEls, { opacity: 0, y: motionOK ? 24 : 0 });
+          ScrollTrigger.batch(revealEls, {
+            start: 'top 88%',
+            once: true,
+            onEnter: function (batch) {
+              gsap.to(batch, {
+                opacity: 1,
+                y: 0,
+                duration: motionOK ? 0.75 : 0.01,
+                stagger: motionOK ? 0.08 : 0,
+                ease: 'power3.out',
+                overwrite: true
+              });
+            }
+          });
+          // Safety net: if a batch never enters for any reason, force
+          // visible after a few seconds rather than leave it hidden.
+          setTimeout(function () {
+            gsap.set(revealEls.filter(function (el) { return gsap.getProperty(el, 'opacity') === 0; }), { opacity: 1, y: 0 });
+          }, 3000);
+        }
 
-    var parallaxTicking = false;
-    var updateParallax = function () {
-      parallaxTicking = false;
-      var viewportCenter = window.innerHeight / 2;
-      activeParallax.forEach(function (el) {
-        var host = el.parentElement;
-        var rect = host.getBoundingClientRect();
-        var distance = (rect.top + rect.height / 2) - viewportCenter;
-        var strength = Number(el.dataset.parallaxStrength) || 0.08;
-        var y = Math.max(-48, Math.min(48, distance * strength));
-        el.style.transform = 'scale(1.12) translate3d(0, ' + y.toFixed(1) + 'px, 0)';
-      });
-    };
-    var onParallaxScroll = function () {
-      if (!parallaxTicking) {
-        parallaxTicking = true;
-        requestAnimationFrame(updateParallax);
+        // --- Masked image reveal: clip-path wipe, same batching pattern.
+        var revealImageEls = gsap.utils.toArray('.reveal-image');
+        if (revealImageEls.length) {
+          gsap.set(revealImageEls, { clipPath: motionOK ? 'inset(0% 0% 100% 0%)' : 'inset(0% 0% 0% 0%)' });
+          ScrollTrigger.batch(revealImageEls, {
+            start: 'top 85%',
+            once: true,
+            onEnter: function (batch) {
+              gsap.to(batch, {
+                clipPath: 'inset(0% 0% 0% 0%)',
+                duration: motionOK ? 1.1 : 0.01,
+                stagger: motionOK ? 0.1 : 0,
+                ease: 'power4.inOut',
+                overwrite: true
+              });
+            }
+          });
+          setTimeout(function () {
+            gsap.set(revealImageEls.filter(function (el) { return gsap.getProperty(el, 'clipPath') !== 'inset(0% 0% 0% 0%)'; }), { clipPath: 'inset(0% 0% 0% 0%)' });
+          }, 3000);
+        }
+
+        // --- Headline text-split: word-by-word rise, reserved for the
+        // biggest hero moments only (.split-headline, applied selectively
+        // per page — "character-splitting everywhere reads as gimmicky").
+        // SplitType is a separate CDN script; guard against it failing to
+        // load independently of GSAP.
+        if (desktop && typeof window.SplitType !== 'undefined') {
+          gsap.utils.toArray('.split-headline').forEach(function (el) {
+            var split = new SplitType(el, { types: 'words', tagName: 'span' });
+            gsap.set(split.words, { opacity: 0, yPercent: 100 });
+            ScrollTrigger.create({
+              trigger: el,
+              start: 'top 85%',
+              once: true,
+              onEnter: function () {
+                gsap.to(split.words, { opacity: 1, yPercent: 0, duration: 0.9, stagger: 0.05, ease: 'power3.out' });
+              }
+            });
+            setTimeout(function () { gsap.set(split.words, { opacity: 1, yPercent: 0 }); }, 3000);
+          });
+        }
+
+        // --- Parallax: statement/card imagery drifts against scroll,
+        // scrubbed directly to scroll position (ScrollTrigger's `scrub`)
+        // instead of the old rAF+manual-distance-calc approach — this is
+        // the specific upgrade that makes it feel continuous rather than
+        // stepped. Desktop + motion-OK only, matching the prior system's
+        // own mobile/reduced-motion exclusion.
+        if (desktop) {
+          gsap.utils.toArray('[data-parallax]').forEach(function (el) {
+            var strength = Number(el.dataset.parallaxStrength) || 0.08;
+            gsap.set(el, { scale: 1.12 });
+            gsap.to(el, {
+              y: function () { return -80 * strength * 10; },
+              ease: 'none',
+              scrollTrigger: {
+                trigger: el.parentElement,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 0.6
+              }
+            });
+          });
+        } else {
+          // Static, intentional-looking zoom with no motion — never a
+          // flat, unscaled image just because parallax is off here.
+          gsap.set('[data-parallax]', { scale: 1.12 });
+        }
+
+        return function cleanup() {
+          // gsap.matchMedia() calls this automatically when a condition's
+          // query stops matching (e.g. resize across the desktop
+          // breakpoint) — revert to plain visible state rather than leave
+          // stale transforms/clip-paths from the previous breakpoint.
+          gsap.set('.reveal, .reveal-image, [data-parallax]', { clearProps: 'all' });
+        };
       }
-    };
-    window.addEventListener('scroll', onParallaxScroll, { passive: true });
-    window.addEventListener('resize', onParallaxScroll, { passive: true });
-    updateParallax();
+    );
   }
 
   // Mark the current page's nav link (belt-and-braces alongside server-set aria-current)
