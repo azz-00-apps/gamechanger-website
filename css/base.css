@@ -206,6 +206,12 @@ body {
 .nav-actions { display: flex; align-items: center; gap: 1rem; }
 button.nav-toggle { display: none; }
 .nav-mobile-book { display: none; }
+/* .nav-links a (0,1,1) otherwise beats .btn-primary's own color (0,1,0)
+   for this one button, since it's the only .btn-primary that's also a
+   .nav-links descendant — the desktop copy in .nav-actions is a
+   sibling, not a descendant, so it never hits this. Scoped to just this
+   button rather than raising .nav-links a's specificity globally. */
+.nav-mobile-book .btn-primary { color: var(--accent-contrast); }
 @media (max-width: 1140px) {
   .nav-mobile-book { display: block; margin-top: 1rem; }
 }
