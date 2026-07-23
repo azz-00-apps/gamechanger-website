@@ -155,7 +155,7 @@ body {
   z-index: 100;
   padding-block: 1.25rem;
   background: transparent;
-  transition: background-color var(--duration-med) var(--ease-out), backdrop-filter var(--duration-med) var(--ease-out), padding var(--duration-med) var(--ease-out);
+  transition: background-color var(--duration-med) var(--ease-out), backdrop-filter var(--duration-med) var(--ease-out), padding var(--duration-med) var(--ease-out), transform var(--duration-med) var(--ease-out);
 }
 .site-nav.is-scrolled {
   background: rgba(10,10,10,0.88);
@@ -163,6 +163,10 @@ body {
   padding-block: .85rem;
   box-shadow: 0 1px 0 var(--border-on-dark);
 }
+/* Hides on scroll-down, reveals on scroll-up (js/main.js). Transform-only
+   (not display/visibility) so the existing transition above animates it
+   and layout never reflows. */
+.site-nav.is-hidden { transform: translateY(-100%); }
 .site-nav .container { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
 .nav-logo {
   font-family: var(--font-display);

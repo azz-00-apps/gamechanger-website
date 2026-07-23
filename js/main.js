@@ -2,11 +2,26 @@
 (function () {
   'use strict';
 
-  // Nav solidifies on scroll
+  // Nav solidifies on scroll, and hides on scroll-down / reveals on
+  // scroll-up (native window scroll — Lenis wraps native scroll rather
+  // than replacing it, so this listener works identically whether Lenis
+  // loaded or not, and needs no dependency on it).
   var nav = document.querySelector('.site-nav');
+  var navLinksEl = document.querySelector('.nav-links');
   if (nav) {
+    var lastScrollY = window.scrollY;
+    var HIDE_AFTER = 80; // don't hide near the very top of the page
+    var HIDE_DELTA = 8; // ignore sub-pixel/jitter scroll noise
     var onScroll = function () {
-      nav.classList.toggle('is-scrolled', window.scrollY > 24);
+      var y = window.scrollY;
+      nav.classList.toggle('is-scrolled', y > 24);
+
+      var mobileMenuOpen = navLinksEl && navLinksEl.classList.contains('is-open');
+      var delta = y - lastScrollY;
+      if (!mobileMenuOpen && Math.abs(delta) > HIDE_DELTA) {
+        nav.classList.toggle('is-hidden', delta > 0 && y > HIDE_AFTER);
+        lastScrollY = y;
+      }
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
