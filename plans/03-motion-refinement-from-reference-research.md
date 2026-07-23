@@ -377,13 +377,39 @@ apply mechanically.
 
 ### Verification checklist
 
-- [ ] If a change is made, re-verify via the same transform-value-at-
+- [x] If a change is made, re-verify via the same transform-value-at-
       scroll-position measurement technique already used throughout this
       project (not just a visual impression) that the new strength value
-      produces a smooth, continuous parallax curve with no jank.
-- [ ] If no change is warranted, say so explicitly in the commit message
+      produces a smooth, continuous parallax curve with no jank. — N/A,
+      no change made (see finding below).
+- [x] If no change is warranted, say so explicitly in the commit message
       rather than silently skipping the phase — this is a real
       verification step even when its outcome is "no change needed."
+
+**Finding (2026-07-23): no change made.** Measured the live effect
+(index.html hero, default strength 0.08): the `[data-parallax]` `<img>`
+moves the full -64px (`-80 * strength * 10`) across roughly one
+viewport-height of scroll (the trigger's `top bottom`→`bottom top` range
+on a 900px-tall section is ~900px of scroll) — confirmed both from the
+Phase 1 regression-check transform readings (already -53px of -64px
+travelled by scrollY 600) and fresh side-by-side viewport screenshots at
+scrollY 0 and 450. That reads as a real, continuously-smooth drift at a
+restrained, editorial magnitude — present but understated, with the
+1.12 scale headroom correctly hiding the image edges at every position
+checked.
+
+Did not adopt day1-run.webflow.io's measured ~0.83–0.92:1 ratios: those
+describe a fundamentally different model (near-1:1 scroll-proportional
+tracking over the element's full scroll life) than this project's
+bounded-total-drift model (a fixed ≤64px/40px travel regardless of how
+long the section is on screen) — mechanically matching the ratio would
+mean multiplying the current travel distance roughly 10x, which would
+read as aggressive/dramatic rather than the restrained, editorial feel
+this whole project has taken from wolverineworldwide.com (the primary
+reference throughout `plans/01`-`03`, vs. day1-run being one of three
+secondary references for this one research pass). The current values
+already sit in a deliberately-chosen, verified-smooth place; day1-run's
+numbers aren't a bar this site is trying to clear.
 
 ### Anti-pattern guards
 
