@@ -63,17 +63,21 @@ submissions/mo vs. 50) and free-tier custom redirect/inline UX support.
   original citation said `:73` — file drifted slightly since the audit;
   this is the corrected line).
 - `.statement-eyebrow`'s working dark-surface override to copy the pattern
-  from: `css/base.css:388`.
+  from: `css/base.css:393`.
 - `.nav-links a` (the rule winning the specificity fight):
-  `css/base.css:182`.
+  `css/base.css:186`.
 - `.btn-primary` (the rule that should be winning but isn't):
-  `css/base.css:277`.
+  `css/base.css:281`.
 - Contact form itself: `content/contact.html:40-87`.
 - Magnetic/tilt hover block missing the reduced-motion gate:
-  `js/main.js:179` (the `gsap.matchMedia().add('(hover: hover) and
-  (pointer: fine)', ...)` call).
+  `js/main.js:233` (the `gsap.matchMedia().add('(hover: hover) and
+  (pointer: fine)', ...)` call — line shifted from :179 after `plans/03`
+  added the Lenis block above it; also now covers a third effect added in
+  the same block by `plans/03` Phase 3, the cursor-spotlight glow — this
+  phase's fix covers all three at once since they share one matchMedia
+  callback).
 - The correct `motionOK` pattern already used elsewhere in the same file to
-  copy from: `js/main.js:51-52,55`.
+  copy from: `js/main.js:70-71`.
 - Dead CSS classes (re-verified live, not just from the audit — confirmed
   `.on-dark` has zero real usages; the audit's grep was distinguishing it
   correctly from the *different*, legitimately-used `.card-on-dark`):
@@ -180,7 +184,7 @@ single highest-leverage fix in the whole plan.
 ### What to implement
 
 `css/base.css:67`'s `.eyebrow { color: var(--accent); }` applies
-unconditionally regardless of surface. `css/base.css:388`'s
+unconditionally regardless of surface. `css/base.css:393`'s
 `.statement-eyebrow { color: var(--gc-gold-300); }` already solves this
 correctly for dark hero surfaces by using the lighter gold tint. Add the
 mirror-image fix for light surfaces: an override that darkens the eyebrow
@@ -198,7 +202,7 @@ palette.)
 
 ### Documentation references
 
-- The exact working pattern to mirror: `css/base.css:388`.
+- The exact working pattern to mirror: `css/base.css:393`.
 - WCAG contrast formula already used and verified in this project's own
   audit trail: `DESIGN-IS-2026-07-23/01-evidence.md` "Visual" section (the
   relative-luminance calculation, if you need to re-derive a ratio for a
@@ -236,8 +240,8 @@ palette.)
 
 ### What to implement
 
-`.nav-links a` (`css/base.css:182`, specificity 0,1,1) beats `.btn-primary`
-(`css/base.css:277`, specificity 0,1,0) in the cascade, so the mobile
+`.nav-links a` (`css/base.css:186`, specificity 0,1,1) beats `.btn-primary`
+(`css/base.css:281`, specificity 0,1,0) in the cascade, so the mobile
 flyout's "Book Now" button (`.nav-mobile-book .btn-primary` — check
 `partials/header.html` for its exact markup before editing) renders with
 `.nav-links a`'s muted gray text color instead of its own intended
@@ -256,7 +260,7 @@ a new one.
 
 ### Documentation references
 
-- The two competing rules: `css/base.css:182` and `:277`.
+- The two competing rules: `css/base.css:186` and `:281`.
 - The DOM location of the affected button: `partials/header.html` (grep
   for `nav-mobile-book`).
 
@@ -281,11 +285,13 @@ a new one.
 
 ### What to implement
 
-`js/main.js:179`'s magnetic-button/card-tilt block is gated only by
+`js/main.js:233`'s magnetic-button/card-tilt/spotlight block (the spotlight
+was added after this plan was written, by `plans/03` Phase 3 — it lives in
+the same callback and gets fixed by this same change) is gated only by
 `gsap.matchMedia().add('(hover: hover) and (pointer: fine)', ...)` — no
 motion-preference check, unlike the reveal/parallax/split-headline systems
 earlier in the same file, which correctly use the `motionOK` condition
-(`js/main.js:51-52,55`). Add the same condition to this block's media query
+(`js/main.js:70-71`). Add the same condition to this block's media query
 string, e.g.:
 
 ```js
@@ -301,7 +307,7 @@ fade-in; either it moves toward the cursor or it doesn't).
 ### Documentation references
 
 - The correct existing pattern one function up in the same file:
-  `js/main.js:51-52`.
+  `js/main.js:70-71`.
 
 ### Verification checklist
 
@@ -310,7 +316,7 @@ fade-in; either it moves toward the cursor or it doesn't).
       `window.matchMedia('(hover: hover) and (pointer: fine) and
       (prefers-reduced-motion: no-preference)').matches` in a console).
 - [ ] Also remove or actually use the dead `prefersReducedMotion` variable
-      at `js/main.js:43` while touching this area — it's declared and
+      at `js/main.js:58` while touching this area — it's declared and
       never read anywhere (a small piece of the Phase 5 dead-code problem
       that lives in the same file section, cheap to fix alongside this).
 
