@@ -476,7 +476,7 @@ choreographed duration than the current 220ms/320ms out/in split).
 
 ## Final Phase: Verification
 
-1. **Full regression sweep of the pre-existing motion system** (this is
+1. **[x] Full regression sweep of the pre-existing motion system** (this is
    the single highest-risk area of this whole plan, since Phase 1 modifies
    how scroll itself behaves site-wide): re-run this project's established
    13-page QA pass — fresh navigation per page (not a cumulative console
@@ -484,17 +484,45 @@ choreographed duration than the current 220ms/320ms out/in split).
    history), zero console errors, zero horizontal overflow at 375px — with
    specific extra attention to parallax smoothness and reveal-timing
    correctness on at least 3-4 representative pages, not just the home
-   page.
-2. **Reduced-motion verification**, by code inspection given this
+   page. — **Done.** All 13 pages: zero console errors on fresh
+   navigation, zero horizontal overflow at 375px. Parallax + reveal
+   spot-checked via live transform/opacity readings on index, about,
+   football, and pricing — all continuous and correctly resolving.
+2. **[x] Reduced-motion verification**, by code inspection given this
    project's tooling limitation (documented above): confirm Lenis
    instantiation, the header hide/show behavior, and the spotlight effect
-   are all correctly gated.
-3. **Viewport sweep**: re-check the 7 viewports this project has
+   are all correctly gated. — **Done, with one honest finding.** Lenis
+   (`js/main.js:69`) is explicitly gated on `motionOK`, correct. Header
+   hide/show is NOT independently gated in JS, but this is consistent
+   with — not weaker than — its pre-existing sibling `.is-scrolled`
+   toggle on the same element: both rely on the sitewide
+   `@media (prefers-reduced-motion: reduce) { *, *::before, *::after {
+   transition-duration: 0.01ms !important; ... } }` rule (`css/base.css`
+   top of file) to collapse the slide to instant, and a scroll-responsive
+   header reacting to the user's own input isn't the same class of
+   concern as autoplaying/decorative motion. The spotlight effect
+   (Phase 3) is **not** independently gated either, but this is not a new
+   gap this plan introduces: it lives inside the same
+   `(hover: hover) and (pointer: fine)` matchMedia callback as the
+   pre-existing magnetic-button/card-tilt effects, which already had this
+   exact, already-documented gap before this plan started (`plans/02`
+   Phase 4). `plans/02` Phase 4's fix (adding
+   `and (prefers-reduced-motion: no-preference)` to that one matchMedia
+   query string) will cover all three effects at once since they share
+   one callback — `plans/02` has been updated to say so explicitly. Not
+   fixing it here was a deliberate scope decision, not an oversight: it's
+   already owned by a different, already-written plan.
+3. **[x] Viewport sweep**: re-check the 7 viewports this project has
    validated against in prior phases (1440/1280/1024/768/430/390/375),
    specifically for the new header hide/show behavior (mobile nav
    interaction with the hide/show state hasn't been exercised anywhere
-   else in this plan) and the CDN-failure fallback path.
-4. Commit each phase separately, matching this project's established
+   else in this plan) and the CDN-failure fallback path. — **Done.**
+   Header hide/show confirmed correct at all 7 viewports. CDN-failure
+   fallback re-tested at 390px (in addition to Phase 1's desktop-only
+   coverage): `window.Lenis` stays undefined, header hide/show still
+   works, the mobile flyout toggle still opens correctly once the header
+   is scrolled back into view, zero console errors.
+4. **[x]** Commit each phase separately, matching this project's established
    commit discipline, push, and — given this plan modifies the core
    scroll behavior of the site — consider this a strong candidate for a
    follow-up `/claude-mem:design-is` re-audit afterward, specifically re-
