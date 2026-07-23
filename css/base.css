@@ -98,7 +98,7 @@ body {
   max-width: var(--prose-max);
 }
 .body-muted { color: var(--text-on-light-muted); }
-.on-dark .body-muted, .surface-dark .body-muted { color: var(--text-on-dark-muted); }
+.surface-dark .body-muted { color: var(--text-on-dark-muted); }
 .text-small { font-size: var(--text-small); }
 
 .stat {
@@ -131,11 +131,9 @@ body {
 }
 .surface-dark { background: var(--surface-dark); color: var(--text-on-dark); }
 .surface-light { background: var(--surface-light); color: var(--text-on-light); }
-.surface-raised-dark { background: var(--surface-dark-raised); }
 .surface-raised-light { background: var(--surface-light-raised); }
 
 .grid { display: grid; gap: var(--grid-gap); }
-.grid-tight { gap: var(--grid-gap-tight); }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
@@ -351,8 +349,8 @@ button.nav-toggle { display: none; }
   color: var(--text-on-dark-muted);
 }
 .testimonial-attribution strong { color: var(--text-on-dark); display: block; font-size: var(--text-body); margin-bottom: .15em; }
-.surface-light .testimonial-attribution, .on-light .testimonial-attribution { color: var(--text-on-light-muted); }
-.surface-light .testimonial-attribution strong, .on-light .testimonial-attribution strong { color: var(--text-on-light); }
+.surface-light .testimonial-attribution { color: var(--text-on-light-muted); }
+.surface-light .testimonial-attribution strong { color: var(--text-on-light); }
 
 /* Pricing card */
 .price-card {
@@ -506,18 +504,12 @@ button.nav-toggle { display: none; }
    Every inter-element margin in the site should trace to one of these —
    no bare inline margin-top values. Numbers match the --space-N scale in
    tokens.css so the mapping from class to token is self-documenting. */
-.mt-0 { margin-top: 0; }
 .mt-2 { margin-top: var(--space-2); }
 .mt-3 { margin-top: var(--space-3); }
 .mt-4 { margin-top: var(--space-4); }
 .mt-5 { margin-top: var(--space-5); }
 .mt-6 { margin-top: var(--space-6); }
-.mt-7 { margin-top: var(--space-7); }
-.mt-8 { margin-top: var(--space-8); }
-.mt-text { margin-top: var(--space-text); }
-.mt-component { margin-top: var(--space-component); }
 .max-w-prose { max-width: var(--prose-max); }
-.max-w-prose-wide { max-width: var(--prose-max-wide); }
 
 /* ============ LIST-DASH ============
    The repeated "— label" credential/highlight list pattern used across
@@ -548,10 +540,6 @@ button.nav-toggle { display: none; }
   color: var(--accent);
 }
 .center-text { text-align: center; margin-inline: auto; }
-.visually-hidden {
-  position: absolute; width: 1px; height: 1px; overflow: hidden;
-  clip: rect(0,0,0,0); white-space: nowrap; border: 0; padding: 0; margin: -1px;
-}
 .skip-link {
   position: absolute; left: 1rem; top: -3rem; z-index: 200;
   background: var(--accent); color: var(--accent-contrast);
