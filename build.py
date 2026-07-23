@@ -45,6 +45,7 @@ SHELL = """<!doctype html>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.min.js" defer></script>
+<script src="https://forminit.com/sdk/v1/forminit.js" defer></script>
 <script src="js/main.js?v={asset_version}" defer></script>
 </body>
 </html>

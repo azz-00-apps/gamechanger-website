@@ -43,6 +43,58 @@
     });
   }
 
+  // Contact form: Forminit SDK (build.py adds the SDK <script> tag
+  // site-wide, matching the existing GSAP/Lenis CDN pattern). Lives
+  // outside the motion system on purpose — a broken form must never
+  // depend on an unrelated animation library loading successfully.
+  // No-ops on every page except contact.html, the only one with a
+  // #contact-form element.
+  var contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    var CONTACT_FORM_ID = 'fi0ugvtfj80';
+    var submitBtn = contactForm.querySelector('button[type="submit"]');
+    var submitBtnDefaultHTML = submitBtn ? submitBtn.innerHTML : '';
+    var successEl = document.getElementById('form-success');
+    var errorEl = document.getElementById('form-error');
+
+    var showFormError = function () {
+      if (errorEl) { errorEl.style.display = 'block'; }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = submitBtnDefaultHTML;
+      }
+    };
+
+    contactForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (errorEl) { errorEl.style.display = 'none'; }
+
+      // SDK-missing fallback: a failed CDN load must not submit silently.
+      if (typeof window.Forminit === 'undefined') {
+        showFormError();
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+      }
+
+      try {
+        var forminit = new window.Forminit();
+        var result = await forminit.submit(CONTACT_FORM_ID, new FormData(contactForm));
+        if (result.error) {
+          showFormError();
+          return;
+        }
+        contactForm.style.display = 'none';
+        if (successEl) { successEl.style.display = 'block'; }
+      } catch (err) {
+        showFormError();
+      }
+    });
+  }
+
   // ============ MOTION SYSTEM (GSAP + ScrollTrigger) ============
   //
   // Safety contract, unchanged in spirit from the vanilla system this
