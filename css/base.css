@@ -351,8 +351,12 @@ button.nav-toggle { display: none; }
   color: var(--text-on-dark-muted);
 }
 .testimonial-attribution strong { color: var(--text-on-dark); display: block; font-size: var(--text-body); margin-bottom: .15em; }
-.surface-light .testimonial-attribution { color: var(--text-on-light-muted); }
-.surface-light .testimonial-attribution strong { color: var(--text-on-light); }
+/* No .surface-light override: every real .testimonial is always inside
+   a .card-on-dark (confirmed live, all 9 site-wide usages) — the
+   light-surface override that used to live here was never correctly
+   needed and fired incorrectly whenever a dark testimonial card sat
+   inside a light-surface section (the site's own layout pattern),
+   rendering near-black text on a near-black card. */
 
 /* Pricing card */
 .price-card {
