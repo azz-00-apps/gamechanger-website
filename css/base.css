@@ -510,6 +510,16 @@ button.nav-toggle { display: none; }
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
+/* Every other link/button site-wide (nav, CTAs, hamburger toggle,
+   footer links) relied on the browser's unstyled default ring — present
+   but not designed. One general rule, same gold language as the inputs
+   above, rather than enumerating every component. :focus-visible (not
+   :focus) so it only shows for real keyboard navigation, matching how
+   the browser's own default already behaved. */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 /* ============ SPACING UTILITIES ============
    Every inter-element margin in the site should trace to one of these —

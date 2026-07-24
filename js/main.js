@@ -27,19 +27,34 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  // Mobile nav toggle
+  // Mobile nav toggle. Keyboard-specific handling below (Escape-to-close,
+  // focus-into-menu on open, focus-back-to-toggle on close) exists
+  // because the menu overlay is visually opaque but not a native <dialog>
+  // — without it, a keyboard user tabbing past the last link lands on
+  // content still hidden behind the open overlay.
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');
   if (toggle && links) {
+    var closeMenu = function () {
+      links.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
     toggle.addEventListener('click', function () {
       var open = links.classList.toggle('is-open');
       toggle.setAttribute('aria-expanded', String(open));
+      if (open) {
+        var firstLink = links.querySelector('a');
+        if (firstLink) { firstLink.focus(); }
+      }
     });
     links.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        links.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
-      });
+      a.addEventListener('click', closeMenu);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && links.classList.contains('is-open')) {
+        closeMenu();
+        toggle.focus();
+      }
     });
   }
 
