@@ -108,6 +108,9 @@ body {
   line-height: 1;
   letter-spacing: var(--tracking-heading);
 }
+/* --accent is 11.45:1 on dark surfaces but only ~1.56:1 on light ones —
+   same bug class as .eyebrow (plans/02 Phase 2, fixed 2026-07-24). */
+.surface-light .stat { color: var(--accent-on-light); }
 .stat-label {
   font-size: var(--text-label);
   letter-spacing: var(--tracking-label);
@@ -360,6 +363,7 @@ button.nav-toggle { display: none; }
 }
 .price-card-title { font-family: var(--font-display); font-weight: 700; font-size: var(--text-heading-sm); letter-spacing: var(--tracking-heading); }
 .price-card-figure { font-family: var(--font-display); font-weight: 700; color: var(--accent); font-size: var(--text-heading-lg); letter-spacing: var(--tracking-heading); margin-top: auto; }
+.surface-light .price-card-figure { color: var(--accent-on-light); }
 .price-card-figure small { font-family: var(--font-body); font-weight: 600; font-size: var(--text-small); color: var(--text-on-light-muted); letter-spacing: 0; }
 
 /* ============ STATEMENT / HERO SECTIONS ============ */
@@ -538,6 +542,7 @@ button.nav-toggle { display: none; }
   top: .15em;
   color: var(--accent);
 }
+.surface-light .list-dash li::before { color: var(--accent-on-light); }
 .center-text { text-align: center; margin-inline: auto; }
 .skip-link {
   position: absolute; left: 1rem; top: -3rem; z-index: 200;
