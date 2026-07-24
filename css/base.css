@@ -486,6 +486,10 @@ button.nav-toggle { display: none; }
 }
 .footer-heading { font-size: var(--text-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
 .footer-grid address, .footer-grid p { font-style: normal; color: var(--text-on-dark-muted); line-height: 1.7; }
+/* .footer-grid p (0,1,1) otherwise beats .footer-heading (0,1,0), since
+   every .footer-heading is itself a <p> inside .footer-grid — same
+   specificity-conflict pattern as plans/02 Phase 3's nav-button fix. */
+.footer-grid .footer-heading { color: var(--accent); }
 .footer-grid a:hover { color: var(--text-on-dark); }
 .social-row { display: flex; gap: 1rem; margin-top: 1rem; }
 .social-row a { width: 2.25rem; height: 2.25rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--border-on-dark); }
