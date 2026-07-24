@@ -111,12 +111,6 @@ body {
 /* --accent is 11.45:1 on dark surfaces but only ~1.56:1 on light ones —
    same bug class as .eyebrow (plans/02 Phase 2, fixed 2026-07-24). */
 .surface-light .stat { color: var(--accent-on-light); }
-.stat-label {
-  font-size: var(--text-label);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--text-on-dark-muted);
-}
 
 /* ============ LAYOUT ============ */
 .container {
