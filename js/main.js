@@ -28,10 +28,13 @@
   }
 
   // Mobile nav toggle. Keyboard-specific handling below (Escape-to-close,
-  // focus-into-menu on open, focus-back-to-toggle on close) exists
-  // because the menu overlay is visually opaque but not a native <dialog>
-  // — without it, a keyboard user tabbing past the last link lands on
-  // content still hidden behind the open overlay.
+  // focus-into-menu on open, focus-back-to-toggle on close, and a Tab
+  // trap cycling toggle <-> first link <-> ... <-> last link <-> toggle)
+  // exists because the menu overlay is visually opaque but not a native
+  // <dialog> — without it, a keyboard user tabbing past the last link
+  // lands on content still hidden behind the open overlay. The trap
+  // includes the toggle itself (not just the links) since it stays
+  // visible and interactive the whole time the menu is open.
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');
   if (toggle && links) {
@@ -51,9 +54,33 @@
       a.addEventListener('click', closeMenu);
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && links.classList.contains('is-open')) {
+      if (!links.classList.contains('is-open')) { return; }
+      if (e.key === 'Escape') {
         closeMenu();
         toggle.focus();
+        return;
+      }
+      if (e.key !== 'Tab') { return; }
+      var focusable = links.querySelectorAll('a');
+      if (!focusable.length) { return; }
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          toggle.focus();
+        } else if (document.activeElement === toggle) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          toggle.focus();
+        } else if (document.activeElement === toggle) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     });
   }
